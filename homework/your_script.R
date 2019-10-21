@@ -1,4 +1,34 @@
 ## Cecilia Villanueva
+
+## Question 5 - Visualizing DNA Shape features
+##Install packages
+# Bioconductor
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install()
+# DNAshapeR
+BiocManager::install("DNAshapeR")
+# Caret
+install.packages("caret")
+
+## Initialization
+library(DNAshapeR)
+library(caret)
+workingPath <- "/Users/ceciliavillanueva/Desktop/BISC481/CTCF/"
+
+# Extract sample sequences
+fn <- system.file("extdata", "CGRsample.fa", package = "DNAshapeR")
+
+# Predict DNA shapes
+pred <- getShape(fn)
+
+# Generate ensemble plots- we generate one ensemble for each of the 4 parameters
+plotShape(pred$MGW)
+plotShape(pred$ProT)
+plotShape(pred$Roll)
+plotShape(pred$Helt)
+
+######################### New problem
 ##Question 6 - Logistic regression on ChIP-seq data
 ##Install packages
 # Bioconductor
