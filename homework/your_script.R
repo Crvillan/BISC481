@@ -93,3 +93,29 @@ plot(performance)
 auc <- performance(prediction, "auc")
 auc <- unlist(slot(auc, "y.values"))
 auc
+
+####To generate the second plot for only "1-mer", we repeat the same code starting with the new encoding of feature vectors
+## Encode feature vectors - "1-mer" only
+featureType <- c("1-mer")
+featureVector <- encodeSeqShape(paste0(workingPath, "ctcf.fa"), pred, featureType)
+df <- data.frame(isBound = exp_data$isBound, featureVector)
+
+
+## Logistic regression
+# Set parameters for Caret
+trainControl <- trainControl(method = "cv", number = 10, 
+                             savePredictions = TRUE, classProbs = TRUE)
+# Perform prediction
+model <- train(isBound~ ., data = df, trControl = trainControl,
+               method = "glm", family = binomial, metric ="ROC")
+summary(model)
+
+## Plot AUROC
+prediction <- prediction( model$pred$Y, model$pred$obs )
+performance <- performance( prediction, "tpr", "fpr" )
+plot(performance)
+
+## Caluculate AUROC
+auc <- performance(prediction, "auc")
+auc <- unlist(slot(auc, "y.values"))
+auc
