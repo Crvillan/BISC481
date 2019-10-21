@@ -1,4 +1,4 @@
-## Question 5.
+## Question 5
 ##Install packages
 # Bioconductor
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -20,5 +20,8 @@ fn <- system.file("extdata", "CGRsample.fa", package = "DNAshapeR")
 # Predict DNA shapes
 pred <- getShape(fn)
 
-# Generate ensemble plots
+# Generate ensemble plots- We generate ensemble plots for each of the parameters that we want to observe.
 plotShape(pred$MGW)
+plotShape(pred$ProT)
+plotShape(pred$Roll)
+plotShape(pred$HelT)
