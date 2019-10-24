@@ -182,7 +182,7 @@ plotShape(pred2$Helt)
 
 
 ## Question 6- Logistic regression on ChIP-seq data
-##Install packages
+## Install packages
 # Bioconductor
 if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
@@ -201,7 +201,7 @@ library(DNAshapeR)
 library(caret)
 library(ROCR)
 library(Biostrings)
-workingPath <- "/Users/ceciliavillanueva/Desktop/BISC481/CTCF/"
+workingPath <- "/Users/ceciliavillanueva/Downloads/BISC481-master/CTCF/"
 
 ## Generate data for the classifcation (assign Y to bound and N to non-bound)
 # bound
@@ -248,11 +248,11 @@ auc <- performance(prediction, "auc")
 auc <- unlist(slot(auc, "y.values"))
 auc
 
-####To generate the second plot for only "1-mer", we repeat the same code starting with the new encoding of feature vectors
-## Encode feature vectors - "1-mer" only
-featureType <- c("1-mer")
-featureVector <- encodeSeqShape(paste0(workingPath, "ctcf.fa"), pred, featureType)
-df <- data.frame(isBound = exp_data$isBound, featureVector)
+##Now to generate the second AUROC for Seq only
+## Encode feature vectors for SEQ ONLY-> we now do the same thing but change the feature type to seq only
+featureType2 <- c("1-mer")
+featureVector2 <- encodeSeqShape(paste0(workingPath, "ctcf.fa"), pred, featureType2)
+df2 <- data.frame(isBound = exp_data$isBound, featureVector2)
 
 
 ## Logistic regression
@@ -260,16 +260,18 @@ df <- data.frame(isBound = exp_data$isBound, featureVector)
 trainControl <- trainControl(method = "cv", number = 10, 
                              savePredictions = TRUE, classProbs = TRUE)
 # Perform prediction
-model <- train(isBound~ ., data = df, trControl = trainControl,
+model3 <- train(isBound~ ., data = df, trControl = trainControl,
                method = "glm", family = binomial, metric ="ROC")
-summary(model)
+summary(model3)
 
 ## Plot AUROC
-prediction <- prediction( model$pred$Y, model$pred$obs )
-performance <- performance( prediction, "tpr", "fpr" )
-plot(performance)
+prediction2 <- prediction( model3$pred$Y, model3$pred$obs )
+performance2 <- performance( prediction, "tpr", "fpr" )
+plot(performance2)
 
 ## Caluculate AUROC
-auc <- performance(prediction, "auc")
+auc <- performance(prediction2, "auc")
 auc <- unlist(slot(auc, "y.values"))
 auc
+
+
