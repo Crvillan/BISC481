@@ -2,6 +2,7 @@
 
 ##Question 4- Using MLR to predict binding sites
 
+##Question4
 ## Install packages
 # Bioconductor
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -16,7 +17,7 @@ install.packages ('data.table')
 ## Initialization
 library(DNAshapeR)
 library(caret)
-workingPath <- "/Users/ceciliavillanueva/Desktop/BISC481/gcPBM/"
+workingPath <- "/Users/ceciliavillanueva/Downloads/BISC481-master/gcPBM/"
 
 ## Predict DNA shapes
 fn_fasta <- paste0(workingPath, "Mad.txt.fa")
@@ -71,20 +72,21 @@ my.theme <- theme(
 )
 
 #DATA TO INPUT
-#Mad: 1-mer only R=0.854836, 1-mer+1-shape  R= 0.8639159
-#Max: 1-mer only R=0.854836, 1-mer+1-shape R=0.8644361
-#Myc: 1-mer only R=0.854836, 1-mer+1-shape R=0.854836
+#Mad: 1-mer only R=0.775186, 1-mer+1-shape  R= 0.8639159
+#Max: 1-mer only R=0.7853066, 1-mer+1-shape R=0.8642102
+#Myc: 1-mer only R=0.777774, 1-mer+1-shape R=0.8548562
 ## Data preparation
-one-mer_Rsquared <- c(0.854836,0.854836,0.854836)
-one-mer+shape_Rsquared <- c(0.8639159,0.8644361, 0.854836)
+one_mer_Rsquared <- c(0.775186,0.7853066,0.777774)
+one_mer_one_shape_Rsquared <- c(0.8639159,0.8642102, 0.8548562)
 
 ## Ploting
 ggplot() +
-  geom_point(aes(x = one-mer_Rsquared, y = one-mer+shape_Rsquared), color = "red", size=1) +
+  geom_point(aes(x = one_mer_Rsquared, y = one_mer_one_shape_Rsquared), color = "red", size=1) +
   geom_abline(slope=1) + geom_vline(xintercept=0) + geom_hline(yintercept=0) +
   coord_fixed(ratio = 1, xlim = c(0,1), ylim = c(0,1)) +
   scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) +
   my.theme
+
 
 ############################## New Problem
 ##Question 5- High-throughput in vivo data analysis
