@@ -86,9 +86,9 @@ ggplot() +
   scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) +
   my.theme
 
-################## New Problem
-##Question 5
-##Install packages
+############################## New Problem
+##Question 5- High-throughput in vivo data analysis
+## Install packages
 # Bioconductor
 if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
@@ -98,22 +98,76 @@ BiocManager::install("DNAshapeR")
 # Caret
 install.packages("caret")
 
+## Install packages
+# Bioconductor
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install()
+BiocManager::install("AnnotationHub")
+BiocManager::install("GenomicRanges")
+BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
+
 ## Initialization
 library(DNAshapeR)
-library(caret)
-workingPath <- "/Users/ceciliavillanueva/Desktop/BISC481/CTCF/"
+library(AnnotationHub)
+library(BSgenome.Mmusculus.UCSC.mm10)
+
+## Data retreive
+seqLength <- 50 #500
+sampleSize <- 2000 #42045
+workingPath <- "/Users/ceciliavillanueva/Desktop/BISC481-master/CTCF/"
+
+# Bound (ChIP-seq)
+ah <- AnnotationHub()
+unique(ah$dataprovider)
+query(ah, "H3K4me3")
+ctcfPeaks <- ah[["AH46100"]]
+seqlevelsStyle(ctcfPeaks) <- "UCSC"
+getFasta( GR = sample(ctcfPeaks, sampleSize), BSgenome = Mmusculus, width = seqLength, 
+          filename = paste0(workingPath, "bound_50.fa"))
+
+# Unbound (random regions w/o overlapping)
+chrName <- names(Mmusculus)[1:22]
+chrLength <- seqlengths(Mmusculus)[1:22]
+randomGr <- GRanges()
+
+while ( length(randomGr) < sampleSize )  {
+  tmpChrName <- sample(chrName, 1)
+  tmpChrLength <- chrLength[tmpChrName]
+  tmpGRanges <- GRanges( seqnames = tmpChrName, strand = "+",
+                         IRanges(start = sample(1:tmpChrLength,1), width = seqLength) )
+  if( length(findOverlaps(ctcfPeaks, tmpGRanges)) == 0 ){
+    randomGr <- c( randomGr, tmpGRanges)
+    print(length(randomGr))
+  }else{
+    print(paste(length(randomGr), "overlap"))
+  }
+}
+randomGr
+
+# Overlap checking
+findOverlaps(ctcfPeaks, randomGr)
+
+# Fasta file generation
+getFasta(randomGr, Mmusculus, width = seqLength, 
+         filename = paste0(workingPath, "unbound_30.fa"))
 
 # Extract sample sequences
-fn <- system.file("extdata", "CGRsample.fa", package = "DNAshapeR")
+fn <- system.file("extdata", "unbound_30.fa", package = "DNAshapeR")
+
+# Extract sample sequences --> this one worked better for me
+fn <- file.path("/Users", "ceciliavillanueva", "Downloads", "BISC481-master", "CTCF", "bound_500.fa")
 
 # Predict DNA shapes
 pred <- getShape(fn)
 
-# Generate ensemble plots- We generate ensemble plots for each of the parameters that we want to observe.
+# Generate ensemble plots
 plotShape(pred$MGW)
 plotShape(pred$ProT)
 plotShape(pred$Roll)
-plotShape(pred$HelT)
+plotShape(pred$Helt)
+
+
 
 ## Question 6- Logistic regression on ChIP-seq data
 ##Install packages
