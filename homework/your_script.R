@@ -112,7 +112,7 @@ library(DNAshapeR)
 library(AnnotationHub)
 library(BSgenome.Mmusculus.UCSC.mm10)
 
-## Data retreive
+## Data retreival
 seqLength <- 50 #500
 sampleSize <- 2000 #42045
 workingPath <- "/Users/ceciliavillanueva/Desktop/BISC481-master/CTCF/"
@@ -124,7 +124,7 @@ query(ah, "H3K4me3")
 ctcfPeaks <- ah[["AH46100"]]
 seqlevelsStyle(ctcfPeaks) <- "UCSC"
 getFasta( GR = sample(ctcfPeaks, sampleSize), BSgenome = Mmusculus, width = seqLength, 
-          filename = paste0(workingPath, "bound_50.fa"))
+          filename = paste0(workingPath, "bound_500.fa"))
 
 # Unbound (random regions w/o overlapping)
 chrName <- names(Mmusculus)[1:22]
@@ -150,12 +150,9 @@ findOverlaps(ctcfPeaks, randomGr)
 
 # Fasta file generation
 getFasta(randomGr, Mmusculus, width = seqLength, 
-         filename = paste0(workingPath, "unbound_30.fa"))
+         filename = paste0(workingPath, "unbound_500.fa"))
 
-# Extract sample sequences
-fn <- system.file("extdata", "unbound_30.fa", package = "DNAshapeR")
-
-# Extract sample sequences --> this one worked better for me
+# Extract sample sequences for BOUND data--> used this command instead because it worked better for me
 fn <- file.path("/Users", "ceciliavillanueva", "Downloads", "BISC481-master", "CTCF", "bound_500.fa")
 
 # Predict DNA shapes
@@ -166,6 +163,19 @@ plotShape(pred$MGW)
 plotShape(pred$ProT)
 plotShape(pred$Roll)
 plotShape(pred$Helt)
+
+# Extract sample sequences for UNBOUND data --> used this command instead because it worked better for me
+fn2 <- file.path("/Users", "ceciliavillanueva", "Downloads", "BISC481-master", "CTCF", "unbound_500.fa")
+
+# Predict DNA shapes
+pred2 <- getShape(fn2)
+
+# Generate ensemble plots
+plotShape(pred2$MGW)
+plotShape(pred2$ProT)
+plotShape(pred2$Roll)
+plotShape(pred2$Helt)
+
 
 
 
